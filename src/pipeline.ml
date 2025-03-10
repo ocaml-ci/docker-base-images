@@ -120,7 +120,6 @@ let install_compiler_df ~distro ~arch ~switch ?windows_port opam_image =
       ] @@
   Dockerfile_opam.ocaml_depexts distro switch @@
   run_no_opam "opam switch create %s --packages=%s" switch_name packages @@
-  run "opam pin add -k version %s %s" package_name package_version @@
   run "opam install -y %s" depext @@
   maybe_install_secondary_compiler run os_family switch @@
   entrypoint_exec (Option.to_list personality @ opam_exec) @@
