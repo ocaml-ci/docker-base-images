@@ -67,8 +67,10 @@ let maybe_install_secondary_compiler (run : 'a run) os_family switch =
 
 let install_package_archive opam_image =
   let open Dockerfile in
+  from ~alias:"opam-archive" "ocaml/opam:archive" @@
   from ~alias:"archive" opam_image @@
   workdir "/home/opam/opam-repository" @@
+  run ~mount:(mount_bind ~target:"/cache" ~from:"opam-archive") "rsync -aH /cache/cache/ /home/opam/opam-repository/cache/" @@
   run "opam admin cache --link=/home/opam/opam-repository/cache" @@
   from "alpine:latest" @@
   copy ~chown:"0:0" ~from:"archive" ~src:["/home/opam/opam-repository/cache"] ~dst:"/cache" ()
